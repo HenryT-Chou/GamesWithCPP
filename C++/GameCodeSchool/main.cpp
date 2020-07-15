@@ -148,7 +148,7 @@ int main()
 
     // Prepare the 6 branches
     Texture textureBranch;
-    textureBranch.loadFromFile(""graphics/branch.png"");
+    textureBranch.loadFromFile("graphics/branch.png");
 
     //Set the texture for each branch (similar thing can be done for clouds)
     for (int i=0; i<Num_branches; i++)
@@ -201,6 +201,9 @@ int main()
     float logSpeedX = 1000;
     float logSpeedY = -1500;
 
+    //create variables to control player input
+    bool acceptInput = false;
+
 	while (window.isOpen())
 	{
 		
@@ -209,6 +212,20 @@ int main()
 		Handle the players input
 		****************************************
 		*/
+        // detects if a key is released and sets the game up to recieve another input
+        // this prevents key spam from affecting the game. 
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::KeyReleased && !paused)
+            {
+                //start listening for keypresses again
+                acceptInput = true;
+
+                //hide the axe
+                spriteAxe.setPosition(2000,spriteAxe.getPosition().y);
+            }
+        }
 
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
@@ -222,7 +239,77 @@ int main()
 
             //reset the time and score after enter key is pressed
             score = 0;
-            timeRemaining = 5;
+            timeRemaining = 6;
+
+            //clear the screen at the start of the game
+            for (int i = 1; i < Num_branches; i++)
+            {
+                branchPositions[i] = side::NONE;
+            }
+
+            //hide the gravestone at start
+            spriteRIP.setPosition(675, 2000);    
+
+            //Move player next to the tree
+            spritePlayer.setPosition(580,720);
+
+            // after screen is cleared, we can now accept player input
+            acceptInput = true;         
+        }
+
+        //what to do if we can accept player input
+        if (acceptInput)
+        {
+            //When the RIGHT ARROW key is pressed
+            if (Keyboard::isKeyPressed(Keyboard::Right))
+            {
+                //move the player to the right
+                playerSide = side::RIGHT;
+                score++;
+
+                //increase available game time
+                timeRemaining = timeRemaining + (2/score) + .15;
+
+                //move the axe with the player
+                spriteAxe.setPosition(AXE_POSITION_RIGHT,spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(1200,720);
+
+                //update branch locations
+                updateBranches(score);
+
+                //set the log to fly off to the left
+                spriteLog.setPosition(810,720);
+                logSpeedX = -5000;
+                logActive - true;
+
+                acceptInput = false;
+            }
+            //When the LEFT ARROW key is pressed
+            if (Keyboard::isKeyPressed(Keyboard::Left))
+            {
+                //move the player to the right
+                playerSide = side::LEFT;
+                score++;
+
+                //increase available game time
+                timeRemaining = timeRemaining + (2/score) + .15;
+
+                //move the axe with the player
+                spriteAxe.setPosition(AXE_POSITION_LEFT,spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(580,720);
+
+                //update branch locations
+                updateBranches(score);
+
+                //set the log to fly off to the left
+                spriteLog.setPosition(810,720);
+                logSpeedX = 5000;
+                logActive - true;
+
+                acceptInput = false;
+            }
         }
 
 		/*
@@ -246,7 +333,7 @@ int main()
                 //Pause the game
                 paused = true;
 
-                //Change the onscreen text
+                //Change the onscreen text - font is all caps
                 messageText.setString("Game Over, You're out of Time!");
 
                 //Reposition the text based on it's new size
@@ -380,6 +467,20 @@ int main()
                 
             }
 
+            //logic for having a log fly off screen
+
+            if (logActive)
+            {
+                spriteLog.setPosition(spriteLog.getPosition().x + (logSpeedX * dt.asSeconds()), spriteLog.getPosition().y + (logSpeedY * dt.asSeconds()));
+
+                //has the log gone off the screen?
+                if (spriteLog.getPosition().x < -100 || spriteLog.getPosition().x > 2000)
+                {
+                    logActive = false;
+                    spriteLog.setPosition(810,720);
+                }
+            }
+
         }//End of if(!paused) statement
         
 
@@ -403,7 +504,7 @@ int main()
         //Draw branches
         for (int i = 0; i < Num_branches; i++)
         {
-            window.draw(branches[i])
+            window.draw(branches[i]);
         }
         
         // Draw the tree on the screen
@@ -438,7 +539,7 @@ int main()
 	return 0;
 }
 
-void updateBranches(int sedd)
+void updateBranches(int seed)
 {
     //move brances down
     for (int j = Num_branches-1; j > 0; j++)
