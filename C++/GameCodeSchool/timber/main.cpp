@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
@@ -207,7 +206,7 @@ int main()
 
 	while (window.isOpen())
 	{
-		        Event event;
+		Event event;
         while (window.pollEvent(event))
         {
             if (event.type == Event::KeyReleased && !paused)
@@ -260,57 +259,74 @@ int main()
 
         //what to do if we can accept player input
         if (acceptInput)
-        {
-            //When the RIGHT ARROW key is pressed
-            if (Keyboard::isKeyPressed(Keyboard::Right))
-            {
-                //move the player to the right
-                playerSide = side::RIGHT;
-                score++;
+		{
+			// More code here next...
+			// First handle pressing the right cursor key
+			if (Keyboard::isKeyPressed(Keyboard::Right))
+			{
+				// Make sure the player is on the right
+				playerSide = side::RIGHT;
 
-                //increase available game time
-                timeRemaining = timeRemaining + (2/score) + .15;
+				score++;
 
-                //move the axe with the player
-                spriteAxe.setPosition(AXE_POSITION_RIGHT,spriteAxe.getPosition().y);
+				// Add to the amount of time remaining
+				timeRemaining += (2 / score) + .15;
 
-                spritePlayer.setPosition(1200,720);
+				spriteAxe.setPosition(AXE_POSITION_RIGHT,
+					spriteAxe.getPosition().y);
 
-                //update branch locations
-                updateBranches(score);
 
-                //set the log to fly off to the left
-                spriteLog.setPosition(810,720);
-                logSpeedX = -5000;
-                logActive = true;
 
-                acceptInput = false;
-            }
-            //When the LEFT ARROW key is pressed
-            if (Keyboard::isKeyPressed(Keyboard::Left))
-            {
-                //move the player to the left
-                playerSide = side::LEFT;
-                score++;
+				spritePlayer.setPosition(1200, 720);
 
-                //increase available game time
-                timeRemaining = timeRemaining + (2/score) + .15;
+				// update the branches
+				updateBranches(score);
 
-                //move the axe with the player
-                spriteAxe.setPosition(AXE_POSITION_LEFT,spriteAxe.getPosition().y);
+				// set the log flying to the left
+				spriteLog.setPosition(810, 720);
+				logSpeedX = -5000;
+				logActive = true;
 
-                spritePlayer.setPosition(580,720);
 
-                //update branch locations
-                updateBranches(score);
+				acceptInput = false;
 
-                //set the log to fly off to the left
-                spriteLog.setPosition(810,720);
-                logSpeedX = 5000;
-                logActive = true;
+				// Play a chop sound
+				//chop.play();
 
-                acceptInput = false;
-            }
+			}
+
+			// Handle the left cursor key
+			if (Keyboard::isKeyPressed(Keyboard::Left))
+			{
+				// Make sure the player is on the left
+				playerSide = side::LEFT;
+
+				score++;
+
+				// Add to the amount of time remaining
+				timeRemaining += (2 / score) + .15;
+
+				spriteAxe.setPosition(AXE_POSITION_LEFT,
+					spriteAxe.getPosition().y);
+
+
+				spritePlayer.setPosition(580, 720);
+
+				// update the branches
+				updateBranches(score);
+
+				// set the log flying
+				spriteLog.setPosition(810, 720);
+				logSpeedX = 5000;
+				logActive = true;
+
+
+				acceptInput = false;
+
+				// Play a chop sound
+				//chop.play();
+
+			}
         }
 
 		/*
