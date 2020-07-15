@@ -1,3 +1,0 @@
-g++ -c *.cpp
-replace timber!!! with what you want the file name to be
-g++ *.o -o timber!!! -lsfml-graphics -lsfml-window -lsfml-system

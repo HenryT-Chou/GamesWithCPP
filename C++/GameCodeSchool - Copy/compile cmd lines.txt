@@ -1,2 +1,0 @@
-g++ -c *.cpp
-g++ *.o -o timber!!! -lsfml-graphics -lsfml-window -lsfml-system
