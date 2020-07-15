@@ -8,6 +8,18 @@
 
 using namespace sf;
 
+//Declare a function
+void updateBranches(int seed);
+//capitalizing the first letter to show that this is a global variable
+const int Num_branches = 6;
+//creatung an array of objects (6 objects stored in and array called branches)
+Sprite branches[Num_branches];
+
+//Where is the player/branch? (L/R)
+//scoped enumerations
+enum class side {LEFT, RIGHT, NONE};
+side branchPositions[Num_branches];
+
 int main()
 {
 	// Create a video mode object
@@ -134,6 +146,60 @@ int main()
 
     scoreText.setPosition(20,20);
 
+    // Prepare the 6 branches
+    Texture textureBranch;
+    textureBranch.loadFromFile(""graphics/branch.png"");
+
+    //Set the texture for each branch (similar thing can be done for clouds)
+    for (int i=0; i<Num_branches; i++)
+    {
+        branches[i].setTexture(textureBranch);
+        branches[i].setPosition(-2000,-2000);
+        //Set the Spirte's origin to center of screen
+        //that way we can manipulate it without changeing position again
+        branches[i].setOrigin(220,20);
+    }
+
+    //Prepare the player sprite
+    Texture texturePlayer;
+    texturePlayer.loadFromFile("graphics/player.png");
+    Sprite spritePlayer;
+    spritePlayer.setTexture(texturePlayer);
+    spritePlayer.setPosition(580,720);
+
+    //Define player starting location
+    //this will be used later to see if the player collides with branch
+    side playerSide = side::LEFT;
+
+    //Prep the player gravestone
+    Texture textureRIP;
+    textureRIP.loadFromFile("graphics/rip.png");
+    Sprite spriteRIP;
+    spriteRIP.setTexture(textureRIP);
+    spriteRIP.setPosition(600,860);
+
+    //Prep the axe to be used by the player
+    Texture textureAxe;
+    textureAxe.loadFromFile("graphics/axe.png");
+    Sprite spriteAxe;
+    spriteAxe.setTexture(textureAxe);
+    spriteAxe.setPosition(700,830);
+
+    //line the axe up with the tree, by making it float
+    const float AXE_POSITION_LEFT = 700;
+    const float AXE_POSITION_RIGHT = 1075;
+
+    //prep the graphics for the log to be "chopped off"
+    Texture textureLog;
+    textureLog.loadFromFile("graphics/log.png");
+    Sprite spriteLog;
+    spriteLog.setTexture(textureLog);
+    spriteAxe.setPosition(810,720);
+
+    //set aside some variables to manipulate the log and make it fly off screen
+    bool logActive = false;
+    float logSpeedX = 1000;
+    float logSpeedY = -1500;
 
 	while (window.isOpen())
 	{
@@ -286,6 +352,34 @@ int main()
             ss << "Score = " << score;
             scoreText.setString(ss.str());
 
+            //update branch sprites
+            for (int i = 0; i < Num_branches; i++)
+            {
+                float height = i * 150;
+                if (branchPositions[i] == side::LEFT)
+                {
+                    //Move the sprite to the left as well
+                    branches[i].setPosition(610, height);
+
+                    //flip the sprite around
+                    branches[i].setRotation(180);
+                }
+                else if (branchPositions[i] == side::RIGHT)
+                {
+                    //Move the sprite to the right as well
+                    branches[i].setPosition(1330, height);
+
+                    //flip the sprite around
+                    branches[i].setRotation(0);
+                }
+                else
+                {
+                    //hide the branches
+                    branches[i].setPosition(3000,height);
+                }
+                
+            }
+
         }//End of if(!paused) statement
         
 
@@ -306,8 +400,20 @@ int main()
         window.draw(spriteCloud2);
         window.draw(spriteCloud3);
 
+        //Draw branches
+        for (int i = 0; i < Num_branches; i++)
+        {
+            window.draw(branches[i])
+        }
+        
         // Draw the tree on the screen
         window.draw(spriteTree);
+
+        // Draw the player/axe/flying log/gravestone
+        window.draw(spritePlayer);
+        window.draw(spriteLog);
+        window.draw(spriteAxe);
+        window.draw(spriteRIP);
 
         // Draw the bee
         window.draw(spriteBee);
@@ -330,4 +436,33 @@ int main()
 	}
 
 	return 0;
+}
+
+void updateBranches(int sedd)
+{
+    //move brances down
+    for (int j = Num_branches-1; j > 0; j++)
+    {
+        branchPositions[j] = branchPositions [j-1];
+    }
+
+    //fill in the branches randomly as old ones move down
+    srand((int)time(0)+seed);
+    //generate a number between 1-4 and store it in
+    int r = (rand() % 5);
+    switch (r)
+    {
+        case 0:
+            branchPositions[0] = side::LEFT;
+            break;
+
+        case 1:
+            branchPositions[0] = side::RIGHT;
+            break;
+
+        default:
+            branchPositions[0] = side::NONE;
+            break;
+        
+    }
 }
