@@ -281,7 +281,7 @@ int main()
                 //set the log to fly off to the left
                 spriteLog.setPosition(810,720);
                 logSpeedX = -5000;
-                logActive - true;
+                logActive = true;
 
                 acceptInput = false;
             }
@@ -306,7 +306,7 @@ int main()
                 //set the log to fly off to the left
                 spriteLog.setPosition(810,720);
                 logSpeedX = 5000;
-                logActive - true;
+                logActive = true;
 
                 acceptInput = false;
             }
