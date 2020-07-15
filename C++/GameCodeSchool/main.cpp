@@ -80,6 +80,20 @@ int main()
     // Variables to control internal clock
     Clock clock;
 
+    // Visual Time Bar
+    RectangleShape timeBar;
+    float timeBarStartWidth = 400;
+    float timeBarHeight = 80;
+    //Vector2f is an obejct with 2 values
+    timeBar.setSize(Vector2f(timeBarStartWidth, timeBarHeight));
+    timeBar.setFillColor(Color::Red);
+    timeBar.setPosition((1920/2) - timeBarStartWidth / 2, 980);
+
+    Time gameTimeTotal;
+    float timeRemaining = 6.0f;
+    float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
+
+
     // Track if user wants game to be paused
     bool paused = true;
 
@@ -139,6 +153,10 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Return))
         {
             paused = false;
+
+            //reset the time and score after enter key is pressed
+            score = 0;
+            timeRemaining = 5;
         }
 
 		/*
@@ -151,6 +169,27 @@ int main()
         {
             // Keep track (measure) time by restarting clock every frame
             Time dt = clock.restart();
+
+            //Change the remaining time
+            timeRemaining = timeRemaining - dt.asSeconds();
+            //change the time bar size every second
+            timeBar.setSize(Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
+
+            if (timeRemaining <= 0.0f)
+            {
+                //Pause the game
+                paused = true;
+
+                //Change the onscreen text
+                messageText.setString("Game Over, You're out of Time!");
+
+                //Reposition the text based on it's new size
+                FloatRect textRect = messageText.getLocalBounds();
+                messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+
+                messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+            }
 
             // Setup bee starting location on screen
             if (!beeActive)
@@ -272,6 +311,9 @@ int main()
 
         // Draw the bee
         window.draw(spriteBee);
+
+        //Draw the time bar after the tree so the bar is before the tree
+        window.draw(timeBar);
 
         // Draw the score
         window.draw(scoreText);
