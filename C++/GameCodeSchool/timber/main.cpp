@@ -17,7 +17,7 @@ Sprite branches[Num_branches];
 
 //Where is the player/branch? (L/R)
 //scoped enumerations
-enum class side {LEFT, RIGHT, NONE};
+enum class side { LEFT, RIGHT, NONE };
 side branchPositions[Num_branches];
 
 int main()
@@ -111,6 +111,7 @@ int main()
 
     // Adding Text /  HUD
     int score = 0;
+
     sf::Text messageText;
     sf::Text scoreText;
 
@@ -123,11 +124,11 @@ int main()
     scoreText.setFont(font);
 
     //Create our message
-    messageText.setString("Press Enter To Start!");
+    messageText.setString("Press Enter To Start! Use Arrow Keys to Play!");
     scoreText.setString("Score = 0");
 
     //Adjust font Size
-    messageText.setCharacterSize(75);
+    messageText.setCharacterSize(70);
     scoreText.setCharacterSize(100);
 
     //Set font color
@@ -206,15 +207,7 @@ int main()
 
 	while (window.isOpen())
 	{
-		
-		/*
-		****************************************
-		Handle the players input
-		****************************************
-		*/
-        // detects if a key is released and sets the game up to recieve another input
-        // this prevents key spam from affecting the game. 
-        Event event;
+		        Event event;
         while (window.pollEvent(event))
         {
             if (event.type == Event::KeyReleased && !paused)
@@ -226,6 +219,14 @@ int main()
                 spriteAxe.setPosition(2000,spriteAxe.getPosition().y);
             }
         }
+
+		/*
+		****************************************
+		Handle the players input
+		****************************************
+		*/
+        // detects if a key is released and sets the game up to recieve another input
+        // this prevents key spam from affecting the game. 
 
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
@@ -288,7 +289,7 @@ int main()
             //When the LEFT ARROW key is pressed
             if (Keyboard::isKeyPressed(Keyboard::Left))
             {
-                //move the player to the right
+                //move the player to the left
                 playerSide = side::LEFT;
                 score++;
 
@@ -535,8 +536,8 @@ int main()
 
         // Draw the player/axe/flying log/gravestone
         window.draw(spritePlayer);
-        window.draw(spriteLog);
         window.draw(spriteAxe);
+        window.draw(spriteLog);
         window.draw(spriteRIP);
 
         // Draw the bee
